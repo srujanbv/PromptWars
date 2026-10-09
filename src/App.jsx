@@ -14,8 +14,45 @@ import { CheckCircle2, AlertTriangle, Info, Sparkles } from 'lucide-react';
 
 const STORAGE_KEY_INCIDENTS = 'echo_campus_incidents_v1';
 const STORAGE_KEY_VERIFICATIONS = 'echo_campus_verifications_v1';
+const STORAGE_KEY_THEME = 'echo_theme_preference';
 
 export default function App() {
+  // Theme state ('system' | 'light' | 'dark')
+  const [themeMode, setThemeMode] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEY_THEME) || 'system';
+    } catch {
+      return 'system';
+    }
+  });
+
+  // Apply active theme to documentElement
+  useEffect(() => {
+    const applyTheme = () => {
+      let resolved = themeMode;
+      if (themeMode === 'system') {
+        resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', resolved);
+      document.documentElement.style.colorScheme = resolved;
+    };
+
+    applyTheme();
+
+    try {
+      localStorage.setItem(STORAGE_KEY_THEME, themeMode);
+    } catch (e) {
+      console.error('Failed to save theme preference', e);
+    }
+
+    if (themeMode === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handler = () => applyTheme();
+      mediaQuery.addEventListener('change', handler);
+      return () => mediaQuery.removeEventListener('change', handler);
+    }
+  }, [themeMode]);
+
   // 1. State & LocalStorage Persistence
   const [incidents, setIncidents] = useState(() => {
     try {
@@ -166,6 +203,8 @@ export default function App() {
         onResetData={handleResetData}
         clusterCount={patterns.length}
         verifiedCount={verifiedCount}
+        themeMode={themeMode}
+        onThemeChange={setThemeMode}
       />
 
       <main className="main-content">

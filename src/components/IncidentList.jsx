@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, MapPin, ThumbsUp, Clock, Plus, Lightbulb, AlertTriangle, Wifi, Droplets, Lock, Volume2 } from 'lucide-react';
+import { Search, Filter, MapPin, ThumbsUp, Clock, Plus, AlertTriangle, Lightbulb, Wifi, Droplets, Lock, Volume2, RotateCcw } from 'lucide-react';
 import { CATEGORIES } from '../data/initialData';
 import { formatTimeAgo } from '../utils/patternEngine';
 
@@ -38,51 +38,61 @@ export default function IncidentList({
     return matchesSearch && matchesCategory && matchesPriority && matchesStatus;
   });
 
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('all');
+    setSelectedPriority('all');
+    setSelectedStatus('all');
+  };
+
   return (
     <div className="incident-feed-section">
       <div className="section-header">
         <div>
           <h2 className="section-title">
-            <Filter size={20} color="var(--purple-400)" />
+            <Filter size={19} color="var(--accent-teal)" />
             <span>Campus Incident Log ({filteredIncidents.length})</span>
           </h2>
           <p className="section-subtitle">
-            Live crowdsourced student reports with real-time status and corroboration tracking
+            Operational queue of crowdsourced student problem reports and live status telemetry
           </p>
         </div>
 
         <button className="btn btn-primary btn-sm" onClick={onOpenReport}>
-          <Plus size={15} />
-          <span>New Report</span>
+          <Plus size={14} />
+          <span>+ Log Incident</span>
         </button>
       </div>
 
       {/* Filter and Search Bar */}
       <div className="incident-controls">
         <div className="search-input-wrapper">
-          <Search size={16} className="search-input-icon" />
+          <Search size={15} className="search-input-icon" />
           <input
             type="text"
             className="search-input"
-            placeholder="Search reports by keyword, building, incident ID..."
+            placeholder="Filter incidents by keyword, building, or #ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Filter incidents"
           />
         </div>
 
         {/* Category Filter Pills */}
-        <div className="filter-pills-row" role="tablist">
+        <div className="filter-pills-row" role="tablist" aria-label="Category filters">
           <button
+            type="button"
             className={`filter-pill ${selectedCategory === 'all' ? 'active' : ''}`}
             onClick={() => setSelectedCategory('all')}
           >
-            All Categories ({incidents.length})
+            All ({incidents.length})
           </button>
           {CATEGORIES.map((cat) => {
             const count = incidents.filter(i => i.category === cat.id).length;
             return (
               <button
                 key={cat.id}
+                type="button"
                 className={`filter-pill ${selectedCategory === cat.id ? 'active' : ''}`}
                 onClick={() => setSelectedCategory(cat.id)}
               >
@@ -92,26 +102,28 @@ export default function IncidentList({
           })}
         </div>
 
-        {/* Secondary Priority & Status filters */}
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        {/* Priority & Status Dropdowns */}
+        <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <select 
             className="form-select" 
-            style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.78rem' }}
+            style={{ width: 'auto', padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value)}
+            aria-label="Filter by priority"
           >
             <option value="all">All Priorities</option>
-            <option value="Low">Low Priority</option>
-            <option value="Medium">Medium Priority</option>
-            <option value="High">High Priority</option>
-            <option value="Critical">Critical Priority</option>
+            <option value="Low">Priority: Low</option>
+            <option value="Medium">Priority: Medium</option>
+            <option value="High">Priority: High</option>
+            <option value="Critical">Priority: Critical</option>
           </select>
 
           <select 
             className="form-select" 
-            style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.78rem' }}
+            style={{ width: 'auto', padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
+            aria-label="Filter by status"
           >
             <option value="all">All Statuses</option>
             <option value="New">Status: New</option>
@@ -119,14 +131,33 @@ export default function IncidentList({
             <option value="Under Review">Status: Under Review</option>
             <option value="Resolved">Status: Resolved</option>
           </select>
+
+          {(searchTerm || selectedCategory !== 'all' || selectedPriority !== 'all' || selectedStatus !== 'all') && (
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={handleResetFilters}
+              style={{ fontSize: '0.74rem', padding: '0.3rem 0.6rem' }}
+            >
+              <RotateCcw size={12} /> Clear Filters
+            </button>
+          )}
         </div>
       </div>
 
       {/* Incident List Cards */}
       <div className="incidents-container">
         {filteredIncidents.length === 0 ? (
-          <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center', color: '#94a3b8' }}>
-            No incidents found matching the selected filters.
+          <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+              No matching incidents found
+            </p>
+            <p style={{ fontSize: '0.82rem', marginBottom: '1rem' }}>
+              Try adjusting your search query or clear category/priority filters.
+            </p>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={handleResetFilters}>
+              Reset Filters
+            </button>
           </div>
         ) : (
           filteredIncidents.map((incident) => {
@@ -141,19 +172,19 @@ export default function IncidentList({
                 onClick={() => onSelectIncident(incident)}
               >
                 <div className="incident-header">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
                     <span className="incident-id-badge">{incident.id}</span>
                     <span 
                       style={{ 
                         display: 'inline-flex', 
                         alignItems: 'center', 
-                        gap: '0.3rem', 
+                        gap: '0.25rem', 
                         fontSize: '0.72rem', 
                         fontWeight: 600, 
-                        color: catObj?.color || '#94a3b8' 
+                        color: catObj?.color || 'var(--text-muted)' 
                       }}
                     >
-                      <IconComp size={13} color={catObj?.color} />
+                      <IconComp size={12} color={catObj?.color} />
                       {catObj?.label || incident.category}
                     </span>
                   </div>
@@ -166,7 +197,7 @@ export default function IncidentList({
                 <h3 className="incident-title">{incident.title}</h3>
 
                 <div className="incident-location-line">
-                  <MapPin size={13} color="var(--cyan-400)" />
+                  <MapPin size={12} color="var(--accent-cyan)" />
                   <span><strong>{incident.location}</strong> {incident.zone ? `— ${incident.zone}` : ''}</span>
                 </div>
 
@@ -179,34 +210,36 @@ export default function IncidentList({
                     <span className={`status-badge ${statusClass}`}>
                       {incident.status}
                     </span>
-                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <Clock size={12} />
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Clock size={11} />
                       {formatTimeAgo(incident.timestamp)}
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <button
+                      type="button"
                       className="upvote-btn"
                       onClick={(e) => {
                         e.stopPropagation();
                         onUpvoteIncident(incident.id);
                       }}
-                      title="Corroborate this incident ('Me Too')"
+                      title="Corroborate this report ('Me Too')"
                     >
-                      <ThumbsUp size={13} />
+                      <ThumbsUp size={12} />
                       <span>{incident.upvotes || 0} Corroborate</span>
                     </button>
 
                     <select
                       className="form-select"
-                      style={{ width: 'auto', padding: '0.2rem 0.5rem', fontSize: '0.72rem' }}
+                      style={{ width: 'auto', padding: '0.2rem 0.45rem', fontSize: '0.72rem' }}
                       value={incident.status}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => {
                         e.stopPropagation();
                         onChangeStatus(incident.id, e.target.value);
                       }}
+                      aria-label={`Change status for incident ${incident.id}`}
                     >
                       <option value="New">New</option>
                       <option value="Investigating">Investigating</option>

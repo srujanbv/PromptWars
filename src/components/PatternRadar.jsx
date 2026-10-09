@@ -4,14 +4,12 @@ import {
   ShieldAlert, 
   CheckCircle2, 
   ShieldQuestion, 
-  ChevronRight, 
   Eye, 
   Sparkles, 
   HelpCircle, 
   ChevronDown, 
   ChevronUp, 
   FileText, 
-  Search, 
   AlertCircle,
   Cpu,
   MapPin,
@@ -50,11 +48,11 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
       <div className="section-header">
         <div>
           <h2 className="section-title">
-            <Radar size={22} color="var(--cyan-400)" />
-            <span>Pattern Radar & Hotspots</span>
+            <Radar size={20} color="var(--accent-teal)" />
+            <span>Pattern Radar & Spatial Clusters</span>
           </h2>
           <p className="section-subtitle">
-            AI correlates real-time campus telemetry to identify multi-report infrastructure clusters
+            Spatial and domain co-occurrence detector correlating crowdsourced campus reports
           </p>
         </div>
       </div>
@@ -62,10 +60,10 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
       {/* Visual Radar Scope */}
       <div className="glass-card radar-scope-card">
         <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)' }}>
-            FREQ: 2.44 GHz &bull; SCAN RANGE: CAMPUS WIDE
+          <div style={{ fontSize: '0.75rem', color: 'var(--accent-teal)', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
+            RADAR SCOPE &bull; ALL SECTORS
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
             {patterns.length} Active Hotspot{patterns.length === 1 ? '' : 's'}
           </div>
         </div>
@@ -104,12 +102,10 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                 <div 
                   className={`radar-blip-dot ${isVerified ? 'cluster-cyan' : 'cluster-high'}`}
                   style={{
-                    transform: isSelected ? 'scale(1.4)' : 'scale(1)',
-                    boxShadow: isSelected ? '0 0 20px #fff' : undefined
+                    transform: isSelected ? 'scale(1.35)' : 'scale(1)',
+                    boxShadow: isSelected ? '0 0 0 2px var(--accent-teal)' : undefined
                   }}
-                >
-                  <div className="radar-blip-ping" />
-                </div>
+                />
                 <div className="radar-cluster-label">
                   {pattern.location.split(' ')[0]} ({pattern.incidentCount})
                 </div>
@@ -120,15 +116,15 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
 
         <div className="radar-legend">
           <div className="legend-item">
-            <div className="legend-dot" style={{ background: 'var(--rose-500)', boxShadow: '0 0 8px var(--rose-500)' }} />
+            <div className="legend-dot" style={{ background: 'var(--accent-rose)' }} />
             <span>Unverified AI Hypothesis</span>
           </div>
           <div className="legend-item">
-            <div className="legend-dot" style={{ background: 'var(--cyan-400)', boxShadow: '0 0 8px var(--cyan-400)' }} />
+            <div className="legend-dot" style={{ background: 'var(--accent-teal)' }} />
             <span>Verified Risk Hotspot</span>
           </div>
           <div className="legend-item">
-            <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>&bull; Blip size = incident density</span>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-muted)' }}>&bull; Blip = cluster location</span>
           </div>
         </div>
       </div>
@@ -136,8 +132,8 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
       {/* Pattern Cards List */}
       <div className="patterns-list">
         {patterns.length === 0 ? (
-          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-            No multi-incident patterns detected yet. Single incidents will automatically group when correlated reports are submitted.
+          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            No multi-incident patterns detected. Reports with matching location and category will cluster automatically.
           </div>
         ) : (
           patterns.map((pattern) => {
@@ -151,8 +147,11 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
             return (
               <div 
                 key={pattern.id} 
-                className={`glass-card pattern-card ${isSelected ? 'glass-card-purple-glow' : ''}`}
-                style={{ borderLeft: `4px solid ${catObj?.color || 'var(--purple-500)'}` }}
+                className="glass-card pattern-card"
+                style={{ 
+                  borderLeft: `4px solid ${catObj?.color || 'var(--accent-purple)'}`,
+                  borderColor: isSelected ? 'var(--border-medium)' : undefined
+                }}
               >
                 <div className="pattern-card-header">
                   <div className="pattern-location-group">
@@ -162,9 +161,9 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                     <div 
                       className="pattern-category-pill"
                       style={{ 
-                        background: `${catObj?.color}22`, 
-                        color: catObj?.color,
-                        border: `1px solid ${catObj?.color}44` 
+                        background: 'var(--bg-subtle)', 
+                        color: catObj?.color || 'var(--text-primary)',
+                        border: '1px solid var(--border-subtle)' 
                       }}
                     >
                       {catObj?.label || pattern.category} &bull; {pattern.incidentCount} Reports
@@ -173,13 +172,13 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
 
                   <div className="confidence-gauge-box">
                     <span className="confidence-val">{pattern.confidence}%</span>
-                    <span className="confidence-label">AI Confidence</span>
+                    <span className="confidence-label">Detector Score</span>
                   </div>
                 </div>
 
                 <div className="pattern-hypothesis-box">
                   <div className="hypothesis-title">
-                    <Sparkles size={14} />
+                    <Sparkles size={13} />
                     <span>{pattern.hypothesis.title}</span>
                   </div>
                   <p className="hypothesis-text">
@@ -188,11 +187,11 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                 </div>
 
                 {/* Sub-incidents preview */}
-                <div style={{ marginBottom: '0.85rem' }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
+                <div style={{ marginBottom: '0.75rem' }}>
+                  <div style={{ fontSize: '0.74rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
                     Linked Student Reports ({pattern.incidents.length}):
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                     {pattern.incidents.map((inc) => (
                       <div 
                         key={inc.id}
@@ -201,21 +200,22 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          padding: '0.35rem 0.6rem',
-                          background: 'rgba(255, 255, 255, 0.02)',
-                          borderRadius: 'var(--radius-sm)',
-                          fontSize: '0.78rem',
+                          padding: '0.35rem 0.55rem',
+                          background: 'var(--bg-subtle)',
+                          borderRadius: '6px',
+                          fontSize: '0.76rem',
                           cursor: 'pointer',
-                          color: '#cbd5e1'
+                          color: 'var(--text-secondary)',
+                          border: '1px solid var(--border-subtle)'
                         }}
                       >
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <strong style={{ color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)' }}>{inc.id}</strong>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <strong style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono, monospace' }}>{inc.id}</strong>
                           <span style={{ maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {inc.title}
                           </span>
                         </span>
-                        <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>
                           {formatTimeAgo(inc.timestamp)}
                         </span>
                       </div>
@@ -231,22 +231,22 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                     onClick={() => toggleExplanation(pattern.id)}
                     aria-expanded={isExplanationOpen}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                      <HelpCircle size={15} color="var(--cyan-400)" />
-                      <span style={{ fontWeight: 700, color: 'var(--cyan-400)' }}>Explain This Pattern</span>
-                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-                        (Detector criteria & observed evidence)
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <HelpCircle size={14} color="var(--accent-teal)" />
+                      <span style={{ fontWeight: 700, color: 'var(--accent-teal)', fontSize: '0.8rem' }}>Explain This Pattern</span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                        (Detector criteria & observed facts)
                       </span>
                     </div>
-                    {isExplanationOpen ? <ChevronUp size={15} color="var(--cyan-400)" /> : <ChevronDown size={15} color="var(--cyan-400)" />}
+                    {isExplanationOpen ? <ChevronUp size={14} color="var(--text-muted)" /> : <ChevronDown size={14} color="var(--text-muted)" />}
                   </button>
 
                   {isExplanationOpen && explanation && (
                     <div className="pattern-explanation-body">
                       {/* 1. Detector Grouping Criteria */}
-                      <div className="explanation-section">
+                      <div>
                         <div className="explanation-section-heading">
-                          <Cpu size={14} color="var(--cyan-400)" />
+                          <Cpu size={13} color="var(--accent-teal)" />
                           <span>1. Detector Grouping Criteria</span>
                         </div>
                         <ul className="explanation-bullet-list">
@@ -263,8 +263,8 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                       <div className="explanation-two-col">
                         {/* Observed Facts (Ground Truth) */}
                         <div className="facts-box">
-                          <div className="explanation-section-heading" style={{ color: '#38bdf8' }}>
-                            <FileText size={14} color="#38bdf8" />
+                          <div className="explanation-section-heading" style={{ color: 'var(--accent-cyan)' }}>
+                            <FileText size={13} color="var(--accent-cyan)" />
                             <span>Observed Facts (Ground Truth)</span>
                           </div>
                           <ul className="explanation-bullet-list">
@@ -277,19 +277,19 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                           </ul>
                         </div>
 
-                        {/* Inferred Hypotheses (AI / Statistical Inference) */}
+                        {/* Inferred Hypotheses (AI Inference) */}
                         <div className="hypothesis-inference-box">
-                          <div className="explanation-section-heading" style={{ color: 'var(--purple-400)' }}>
-                            <Sparkles size={14} color="var(--purple-400)" />
-                            <span>Inferred Hypotheses (AI Inference)</span>
+                          <div className="explanation-section-heading" style={{ color: 'var(--accent-purple)' }}>
+                            <Sparkles size={13} color="var(--accent-purple)" />
+                            <span>Inferred Hypotheses (Inference)</span>
                           </div>
-                          <div style={{ fontSize: '0.8rem', color: '#e2e8f0', marginBottom: '0.35rem', fontWeight: 600 }}>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-primary)', marginBottom: '0.25rem', fontWeight: 600 }}>
                             {explanation.inferredHypothesis.title}
                           </div>
-                          <p style={{ fontSize: '0.76rem', color: '#cbd5e1', lineHeight: 1.45, marginBottom: '0.45rem' }}>
+                          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '0.35rem' }}>
                             {explanation.inferredHypothesis.summary}
                           </p>
-                          <div style={{ fontSize: '0.74rem', color: 'var(--purple-400)' }}>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--accent-purple)' }}>
                             <strong>Suggested Next Step:</strong> {explanation.inferredHypothesis.recommendedAction}
                           </div>
                         </div>
@@ -297,8 +297,8 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
 
                       {/* 3. Supporting Report IDs Breakdown */}
                       <div className="supporting-reports-box">
-                        <div className="explanation-section-heading" style={{ color: '#e2e8f0' }}>
-                          <Tag size={14} color="var(--amber-400)" />
+                        <div className="explanation-section-heading" style={{ color: 'var(--text-primary)' }}>
+                          <Tag size={13} color="var(--accent-amber)" />
                           <span>Supporting Reports & Spatial Context</span>
                         </div>
                         <div className="supporting-reports-grid">
@@ -310,17 +310,17 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                               title="Click to view full report"
                             >
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ color: 'var(--cyan-400)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                                <span style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: '0.72rem' }}>
                                   {inc.id}
                                 </span>
-                                <span className={`priority-tag priority-${inc.priority}`} style={{ fontSize: '0.65rem', padding: '1px 5px' }}>
+                                <span className={`priority-tag priority-${inc.priority}`} style={{ fontSize: '0.62rem', padding: '1px 4px' }}>
                                   {inc.priority}
                                 </span>
                               </div>
-                              <div style={{ fontSize: '0.75rem', color: '#f1f5f9', fontWeight: 500, margin: '2px 0', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                              <div style={{ fontSize: '0.74rem', color: 'var(--text-primary)', fontWeight: 500, margin: '2px 0', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                                 {inc.title}
                               </div>
-                              <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+                              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
                                 <MapPin size={10} style={{ display: 'inline', marginRight: '2px' }} />
                                 {inc.zone || inc.location}
                               </div>
@@ -331,14 +331,14 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
 
                       {/* 4. Uncertainty & Human Verification Requirement */}
                       <div className="uncertainty-verification-box">
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', marginBottom: '0.35rem' }}>
-                          <AlertCircle size={15} color="var(--amber-400)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                          <div style={{ fontSize: '0.76rem', color: '#fef3c7', lineHeight: 1.45 }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', marginBottom: '0.25rem' }}>
+                          <AlertCircle size={14} color="var(--accent-amber)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                          <div style={{ fontSize: '0.75rem', color: 'var(--accent-amber)', lineHeight: 1.4 }}>
                             <strong>Uncertainty Note:</strong> {explanation.uncertaintyNote}
                           </div>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', paddingLeft: '1.4rem' }}>
-                          <span style={{ fontSize: '0.76rem', color: 'var(--amber-400)', fontWeight: 600, lineHeight: 1.45 }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', paddingLeft: '1.2rem' }}>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--accent-amber)', fontWeight: 600, lineHeight: 1.4 }}>
                             &bull; <strong>Protocol Requirement:</strong> {explanation.humanVerificationRequirement}
                           </span>
                         </div>
@@ -351,7 +351,7 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                   <div className="verification-status-badge">
                     {isVerified ? (
                       <span className="verification-status-badge status-verified">
-                        <CheckCircle2 size={13} />
+                        <CheckCircle2 size={12} />
                         <span>Verified Campus Risk</span>
                       </span>
                     ) : isDismissed ? (
@@ -360,19 +360,19 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                       </span>
                     ) : (
                       <span className="verification-status-badge status-unverified">
-                        <ShieldQuestion size={13} />
+                        <ShieldQuestion size={12} />
                         <span>Unverified AI Hypothesis</span>
                       </span>
                     )}
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '0.45rem' }}>
                     {!isVerified && (
                       <button 
                         className="btn btn-amber btn-sm"
                         onClick={() => onVerifyPattern(pattern)}
                       >
-                        <ShieldAlert size={14} />
+                        <ShieldAlert size={13} />
                         <span>Verify / Review</span>
                       </button>
                     )}
@@ -381,7 +381,7 @@ export default function PatternRadar({ patterns, onVerifyPattern, onSelectIncide
                         className="btn btn-secondary btn-sm"
                         onClick={() => onVerifyPattern(pattern)}
                       >
-                        <Eye size={14} />
+                        <Eye size={13} />
                         <span>Audit Log</span>
                       </button>
                     )}

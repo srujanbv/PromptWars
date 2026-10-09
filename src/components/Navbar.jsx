@@ -1,19 +1,27 @@
 import React from 'react';
-import { Radio, PlusCircle, RotateCcw, Zap, ShieldCheck } from 'lucide-react';
+import { Activity, PlusCircle, RotateCcw, Zap, Sun, Moon, Monitor, Shield } from 'lucide-react';
 
-export default function Navbar({ onOpenReport, onOpenPresets, onResetData, clusterCount, verifiedCount }) {
+export default function Navbar({ 
+  onOpenReport, 
+  onOpenPresets, 
+  onResetData, 
+  clusterCount, 
+  verifiedCount,
+  themeMode,
+  onThemeChange 
+}) {
   return (
     <>
       <div className="demo-presentation-banner">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ color: '#fbbf24', fontWeight: 700 }}>⚡ HACKATHON DEMO MODE:</span>
-          <span>ECHO AI Pattern Radar &bull; Human-in-the-loop Campus Safety Intelligence</span>
+        <div className="banner-left">
+          <span className="banner-badge">Campus Operations Live</span>
+          <span>ECHO Telemetry & Incident Pattern Detection</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span style={{ color: '#c084fc' }}>
-            <strong>{clusterCount}</strong> AI Pattern{clusterCount === 1 ? '' : 's'} Detected
+        <div className="banner-right">
+          <span style={{ color: 'var(--accent-purple)' }}>
+            <strong>{clusterCount}</strong> Active Pattern{clusterCount === 1 ? '' : 's'}
           </span>
-          <span style={{ color: '#34d399' }}>
+          <span style={{ color: 'var(--accent-emerald)' }}>
             <strong>{verifiedCount}</strong> Human-Verified
           </span>
           <button 
@@ -30,41 +38,75 @@ export default function Navbar({ onOpenReport, onOpenPresets, onResetData, clust
       <header className="navbar">
         <div className="nav-inner">
           <div className="brand-section" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <div className="brand-logo-glow">
-              <Radio size={22} className="live-icon" />
+            <div className="brand-icon-box">
+              <Shield size={20} />
             </div>
             <div>
               <div className="brand-title">
                 ECHO
-                <span className="brand-tag">AI RADAR</span>
+                <span className="brand-tag">OPS RADAR</span>
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '-2px' }}>
-                Campus Incident Pattern Intelligence
+              <div className="brand-subtitle">
+                Campus Safety & Facilities Intelligence
               </div>
             </div>
           </div>
 
           <div className="nav-actions">
-            <div className="radar-live-badge" title="Real-time campus telemetry active">
+            <div className="radar-live-badge" title="Campus telemetry stream active">
               <div className="live-dot" />
-              <span>RADAR ACTIVE</span>
+              <span>TELEMETRY ACTIVE</span>
+            </div>
+
+            {/* Persistent Light / Dark / System Theme Switcher */}
+            <div className="theme-switcher" role="group" aria-label="Theme mode selector">
+              <button
+                type="button"
+                className={`theme-toggle-btn ${themeMode === 'system' ? 'active' : ''}`}
+                onClick={() => onThemeChange('system')}
+                title="System theme"
+                aria-label="System default theme"
+              >
+                <Monitor size={13} />
+                <span>System</span>
+              </button>
+              <button
+                type="button"
+                className={`theme-toggle-btn ${themeMode === 'light' ? 'active' : ''}`}
+                onClick={() => onThemeChange('light')}
+                title="Light theme"
+                aria-label="Light theme"
+              >
+                <Sun size={13} />
+                <span>Light</span>
+              </button>
+              <button
+                type="button"
+                className={`theme-toggle-btn ${themeMode === 'dark' ? 'active' : ''}`}
+                onClick={() => onThemeChange('dark')}
+                title="Dark theme"
+                aria-label="Dark theme"
+              >
+                <Moon size={13} />
+                <span>Dark</span>
+              </button>
             </div>
 
             <button 
               className="btn btn-cyan btn-sm"
               onClick={onOpenPresets}
-              title="Trigger instant demo scenario to demonstrate pattern clustering"
+              title="Test instant scenario injection for live demonstration"
             >
-              <Zap size={15} />
+              <Zap size={14} />
               <span>Demo Presets</span>
             </button>
 
             <button 
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm"
               onClick={onOpenReport}
             >
-              <PlusCircle size={16} />
-              <span>Report Issue</span>
+              <PlusCircle size={15} />
+              <span>+ Log Incident</span>
             </button>
           </div>
         </div>

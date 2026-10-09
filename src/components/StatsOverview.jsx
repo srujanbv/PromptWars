@@ -1,7 +1,7 @@
 import React from 'react';
-import { AlertOctagon, Layers, ShieldAlert, CheckCircle2, TrendingUp } from 'lucide-react';
+import { Layers, ShieldAlert, CheckCircle2, TrendingUp } from 'lucide-react';
 
-export default function StatsOverview({ incidents, patterns, onFilterClick }) {
+export default function StatsOverview({ incidents, patterns }) {
   const totalIncidents = incidents.length;
   const activePatterns = patterns.length;
   const verifiedRisks = patterns.filter(p => p.verification?.status === 'verified_risk').length;
@@ -15,56 +15,56 @@ export default function StatsOverview({ incidents, patterns, onFilterClick }) {
           <span className="stat-label">Total Reports</span>
           <div className="stat-value">
             {totalIncidents}
-            <span style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 500 }}>incidents</span>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>incidents</span>
           </div>
-          <span className="stat-subtext">Across 6 campus sectors</span>
+          <span className="stat-subtext">Across 6 campus zones</span>
         </div>
-        <div className="stat-icon-wrapper" style={{ background: 'rgba(6, 182, 212, 0.15)', color: 'var(--cyan-400)' }}>
-          <Layers size={24} />
-        </div>
-      </div>
-
-      <div className="glass-card stat-card glass-card-purple-glow">
-        <div className="stat-info">
-          <span className="stat-label">AI Pattern Clusters</span>
-          <div className="stat-value" style={{ color: 'var(--purple-400)' }}>
-            {activePatterns}
-            <span style={{ fontSize: '0.9rem', color: 'var(--purple-400)', fontWeight: 500 }}>hotspots</span>
-          </div>
-          <span className="stat-subtext">
-            {pendingVerification > 0 ? `${pendingVerification} pending human review` : 'All patterns reviewed'}
-          </span>
-        </div>
-        <div className="stat-icon-wrapper" style={{ background: 'rgba(168, 85, 247, 0.15)', color: 'var(--purple-400)' }}>
-          <ShieldAlert size={24} />
-        </div>
-      </div>
-
-      <div className="glass-card stat-card glass-card-amber-glow">
-        <div className="stat-info">
-          <span className="stat-label">Human-Verified Risks</span>
-          <div className="stat-value" style={{ color: 'var(--amber-400)' }}>
-            {verifiedRisks}
-            <span style={{ fontSize: '0.9rem', color: 'var(--amber-400)', fontWeight: 500 }}>confirmed</span>
-          </div>
-          <span className="stat-subtext">Verified by campus safety</span>
-        </div>
-        <div className="stat-icon-wrapper" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--amber-400)' }}>
-          <CheckCircle2 size={24} />
+        <div className="stat-icon-wrapper" style={{ background: 'var(--accent-cyan-bg)', color: 'var(--accent-cyan)', border: '1px solid var(--accent-cyan-border)' }}>
+          <Layers size={20} />
         </div>
       </div>
 
       <div className="glass-card stat-card">
         <div className="stat-info">
-          <span className="stat-label">Student Corroborations</span>
-          <div className="stat-value" style={{ color: 'var(--emerald-400)' }}>
-            +{totalCorroborations}
-            <span style={{ fontSize: '0.9rem', color: 'var(--emerald-400)', fontWeight: 500 }}>signals</span>
+          <span className="stat-label">Detected Patterns</span>
+          <div className="stat-value" style={{ color: 'var(--accent-purple)' }}>
+            {activePatterns}
+            <span style={{ fontSize: '0.85rem', color: 'var(--accent-purple)', fontWeight: 500 }}>clusters</span>
           </div>
-          <span className="stat-subtext">Crowdsourced validation</span>
+          <span className="stat-subtext">
+            {pendingVerification > 0 ? `${pendingVerification} pending officer review` : 'All clusters verified'}
+          </span>
         </div>
-        <div className="stat-icon-wrapper" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--emerald-400)' }}>
-          <TrendingUp size={24} />
+        <div className="stat-icon-wrapper" style={{ background: 'var(--accent-purple-bg)', color: 'var(--accent-purple)', border: '1px solid var(--accent-purple-border)' }}>
+          <ShieldAlert size={20} />
+        </div>
+      </div>
+
+      <div className="glass-card stat-card">
+        <div className="stat-info">
+          <span className="stat-label">Verified Risks</span>
+          <div className="stat-value" style={{ color: 'var(--accent-amber)' }}>
+            {verifiedRisks}
+            <span style={{ fontSize: '0.85rem', color: 'var(--accent-amber)', fontWeight: 500 }}>confirmed</span>
+          </div>
+          <span className="stat-subtext">Human-in-the-loop audited</span>
+        </div>
+        <div className="stat-icon-wrapper" style={{ background: 'var(--accent-amber-bg)', color: 'var(--accent-amber)', border: '1px solid var(--accent-amber-border)' }}>
+          <CheckCircle2 size={20} />
+        </div>
+      </div>
+
+      <div className="glass-card stat-card">
+        <div className="stat-info">
+          <span className="stat-label">Crowd Corroborations</span>
+          <div className="stat-value" style={{ color: 'var(--accent-emerald)' }}>
+            +{totalCorroborations}
+            <span style={{ fontSize: '0.85rem', color: 'var(--accent-emerald)', fontWeight: 500 }}>signals</span>
+          </div>
+          <span className="stat-subtext">Student validation inputs</span>
+        </div>
+        <div className="stat-icon-wrapper" style={{ background: 'var(--accent-emerald-bg)', color: 'var(--accent-emerald)', border: '1px solid var(--accent-emerald-border)' }}>
+          <TrendingUp size={20} />
         </div>
       </div>
     </div>
